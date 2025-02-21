@@ -296,7 +296,7 @@ public class AllocationLineComputeServiceImpl implements AllocationLineComputeSe
   }
 
   @Override
-  public BigDecimal getAllocatedTime(Project project, Sprint sprint) {
+  public BigDecimal getAllocatedTime(Project project, LocalDate fromDate, LocalDate toDate) {
     List<AllocationLine> allocationLineList =
         allocationLineRepo.all().fetch().stream()
             .filter(allocationLine -> project.equals(allocationLine.getProject()))
@@ -313,31 +313,26 @@ public class AllocationLineComputeServiceImpl implements AllocationLineComputeSe
 
       LocalDate allocationLineFromDate = period.getFromDate();
       LocalDate allocationLineToDate = period.getToDate();
-      LocalDate sprintFromDate = sprint.getFromDate();
-      LocalDate sprintToDate = sprint.getToDate();
 
       if (allocationLineFromDate == null
           || allocationLineToDate == null
-          || sprintFromDate == null
-          || sprintToDate == null
+          || fromDate == null
+          || toDate == null
           || employee == null) {
         continue;
       }
 
       BigDecimal sprintPeriod = BigDecimal.ZERO;
-      if (sprintFromDate.isAfter(allocationLineFromDate)
-          && sprintToDate.isBefore(allocationLineToDate)) {
-        sprintPeriod = getWorkingDays(sprintFromDate, sprintToDate, employee);
+      if (fromDate.isAfter(allocationLineFromDate) && toDate.isBefore(allocationLineToDate)) {
+        sprintPeriod = getWorkingDays(fromDate, toDate, employee);
       }
 
-      if (!sprintFromDate.isAfter(allocationLineFromDate)
-          && sprintToDate.isBefore(allocationLineToDate)) {
-        sprintPeriod = getWorkingDays(allocationLineFromDate, sprintToDate, employee);
+      if (!fromDate.isAfter(allocationLineFromDate) && toDate.isBefore(allocationLineToDate)) {
+        sprintPeriod = getWorkingDays(allocationLineFromDate, toDate, employee);
       }
 
-      if (sprintFromDate.isAfter(allocationLineFromDate)
-          && !sprintToDate.isBefore(allocationLineToDate)) {
-        sprintPeriod = getWorkingDays(sprintFromDate, allocationLineToDate, employee);
+      if (fromDate.isAfter(allocationLineFromDate) && !toDate.isBefore(allocationLineToDate)) {
+        sprintPeriod = getWorkingDays(fromDate, allocationLineToDate, employee);
       }
 
       BigDecimal allocationPeriod =

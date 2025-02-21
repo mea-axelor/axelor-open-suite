@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_7.2.xsd">
+  <form name="project-wizard-form" title="Project Dashboard" model="com.axelor.utils.db.Wizard"
+    extension="true" id="project-wizard-hr-form">
+    <extend target="//panel[@name='filtersPanel']">
+      <insert position="after">
+        <panel name="indicators">
+        </panel>
+        <panel-dashlet colSpan="4" height="175" action="action-project-allocated-time"/>
+      </insert>
+    </extend>
+  </form>
+
+
+  <action-view name="action-project-allocated-time" title="Allocated time">
+    <view type="custom" name="project.allocated.time"/>
+  </action-view>
+  <custom name="project.allocated.time" title="Allocated time" css="report-box">
+    <dataset type="rpc">com.axelor.apps.hr.web.AllocationLineController:getTotalAllocatedTime</dataset>
+    <template>  <![CDATA[
+  <report-box icon='search' label='Total allocated time' value='first.plannedTime'/>
+  ]]></template>
+  </custom>
+</object-views>
