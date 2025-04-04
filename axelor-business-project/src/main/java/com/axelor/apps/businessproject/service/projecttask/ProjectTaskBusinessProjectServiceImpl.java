@@ -577,17 +577,18 @@ public class ProjectTaskBusinessProjectServiceImpl extends ProjectTaskServiceImp
     }
 
     List<ProjectTask> projectTaskList = projectTask.getProjectTaskList();
-    for (ProjectTask task : projectTaskList) {
+    if(!CollectionUtils.isEmpty(projectTaskList))
+    {for (ProjectTask task : projectTaskList) {
       computeProjectTaskTotals(task);
       plannedTime = plannedTime.add(task.getPlannedTime());
       spentTime = spentTime.add(task.getSpentTime());
-    }
+    }}
 
     projectTask.setPlannedTime(plannedTime);
     projectTask.setSpentTime(spentTime);
 
     if (projectTask.getParentTask() == null) {
-      computeProjectTaskReporting(projectTask);
+     // computeProjectTaskReporting(projectTask);
     }
     projectTaskRepo.save(projectTask);
   }
@@ -648,14 +649,6 @@ public class ProjectTaskBusinessProjectServiceImpl extends ProjectTaskServiceImp
    * @throws AxelorException
    */
   protected void computeProjectTaskReporting(ProjectTask projectTask) throws AxelorException {
-    if (projectTask.getUpdatedTime().signum() <= 0 || projectTask.getSoldTime().signum() <= 0) {
-      throw new AxelorException(
-          TraceBackRepository.CATEGORY_CONFIGURATION_ERROR,
-          String.format(
-              I18n.get(BusinessProjectExceptionMessage.PROJECT_TASK_UPDATE_REPORTING_VALUES_ERROR),
-              projectTask.getFullName()));
-    }
-
     BigDecimal percentageOfProgression = projectTask.getSpentTime().multiply(new BigDecimal("100"));
     percentageOfProgression =
         percentageOfProgression.divide(

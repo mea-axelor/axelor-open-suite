@@ -700,4 +700,8 @@
     <context name="_showRecord" expr="eval: id"/>
   </action-view>
 
+  <action-method name="action-project-task-method-set-spent-planned-time">
+    <call class="com.axelor.apps.businessproject.web.ProjectTaskController"
+      method="setSpentPlannedTime"/>
+  </action-method>
 </object-views>
